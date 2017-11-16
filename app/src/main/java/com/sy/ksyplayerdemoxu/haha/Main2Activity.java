@@ -61,24 +61,19 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.button_add1:
                 VVideoView vVideoView = new VVideoView(this);
-                vVideoView.setParams(1, 200, 200, 200, 200, 0, url3, this);
-                root_player.addView(vVideoView);
+                vVideoView.setParams(root_player,1, 200, 200, 200, 200, 0, url3, this);
                 break;
             case R.id.button_exit1:
-
                 break;
             case R.id.button_add2:
                 VVideoView vVideoView2 = new VVideoView(this);
-                vVideoView2.setParams(2, 200, 200, 500, 500, 0, url3, this);
-                root_player.addView(vVideoView2);
+                vVideoView2.setParams(root_player,2, 200, 200, 500, 500, 0, url3, this);
                 break;
             case R.id.button_exit2:
-
                 break;
             case R.id.button_add3:
                 VVideoView vVideoView3 = new VVideoView(this);
-                vVideoView3.setParams(3, 200, 200, 800, 800, 0, url3, this);
-                root_player.addView(vVideoView3);
+                vVideoView3.setParams(root_player,3, 200, 200, 800, 800, 0, url3, this);
                 break;
             case R.id.button_exit3:
 

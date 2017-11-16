@@ -1,9 +1,16 @@
 package com.sy.ksyplayerdemoxu.haha;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.ksyun.media.player.IMediaController;
 import com.ksyun.media.player.IMediaPlayer;
 import com.ksyun.media.player.KSYTextureView;
 
@@ -13,12 +20,13 @@ import java.io.IOException;
  * Created by djf on 2017/11/16.
  */
 
-public class VVideoView extends KSYTextureView implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener {
+public class VVideoView extends KSYTextureView implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener, View.OnClickListener {
     private static final String TAG = "VVideoView";
     private int id, width, height, margeleft, margetop, timetype;
     private String voideurl;
     private Context context;
     private KSYTextureView mVideoView;
+    private ViewGroup parent;
 
     public VVideoView(Context context) {
         super(context);
@@ -26,8 +34,24 @@ public class VVideoView extends KSYTextureView implements IMediaPlayer.OnPrepare
     }
 
     public void setParams(int id, int width, int height, int margeleft,
-                         int margetop, int timetype, String voideurl,
-                         VVideoViewOnListener listener) {
+                          int margetop, int timetype, String voideurl,
+                          VVideoViewOnListener listener) {
+        this.id = id;
+        this.width = width;
+        this.height = height;
+        this.margeleft = margeleft;
+        this.margetop = margetop;
+        this.timetype = timetype;
+        this.voideurl = voideurl;
+        this.listener = listener;
+        initView(context);
+        initListener();
+    }
+
+    public void setParams(ViewGroup root, int id, int width, int height, int margeleft,
+                          int margetop, int timetype, String voideurl,
+                          VVideoViewOnListener listener) {
+        this.parent = root;
         this.id = id;
         this.width = width;
         this.height = height;
@@ -47,6 +71,7 @@ public class VVideoView extends KSYTextureView implements IMediaPlayer.OnPrepare
         lp.leftMargin = margeleft;
         lp.topMargin = margetop;
         mVideoView.setLayoutParams(lp);
+        this.parent.addView(mVideoView);
         mVideoView.setBufferTimeMax(2.0f);
         mVideoView.setTimeout(5, 30);
         try {
@@ -58,6 +83,15 @@ public class VVideoView extends KSYTextureView implements IMediaPlayer.OnPrepare
     }
 
     private void initListener() {
+        Button button = new Button(context);
+        button.setOnClickListener(this);
+        button.setText("X");
+        button.setTextColor(Color.RED);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                50, 50);
+        button.setLayoutParams(lp);
+
+        mVideoView.addView(button);
         mVideoView.setOnPreparedListener(this);
         mVideoView.setOnCompletionListener(this);
         mVideoView.setOnErrorListener(this);
@@ -87,13 +121,23 @@ public class VVideoView extends KSYTextureView implements IMediaPlayer.OnPrepare
 
     @Override
     public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-        Log.e(TAG, "onError: 视频异常" );
+        Log.e(TAG, "onError: 视频异常");
         if (listener != null) {
             listener.onErrorListener(iMediaPlayer, i, i1, id);
         }
         vvRelease();
         return false;
     }
+
+    @Override
+    public void onClick(View view) {
+        if (parent != null) {
+            Log.d(TAG, "onClick: 视频移除");
+            parent.removeView(mVideoView);
+            vvRelease();
+        }
+    }
+
 
     public interface VVideoViewOnListener {
         void onPreparedListener(IMediaPlayer iMediaPlayer, int id);
